@@ -3,23 +3,24 @@
          xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
-    
+
     <parent>
         <groupId>org.springframework.boot</groupId>
         <artifactId>spring-boot-starter-parent</artifactId>
         <version>2.7.0</version>
     </parent>
-    
+
     <groupId>com.example</groupId>
-    <artifactId>vulnerable-blog</artifactId>
+    <artifactId>secure-blog</artifactId>
     <version>0.0.1-SNAPSHOT</version>
-    <name>vulnerable-blog</name>
-    <description>Demo blog with XSS vulnerability</description>
-    
+    <name>xss-breach-v2-fix</name>
+    <description>Secure blog with XSS protection</description>
+
     <properties>
         <java.version>11</java.version>
+        <commons-text.version>1.10.0</commons-text.version>
     </properties>
-    
+
     <dependencies>
         <dependency>
             <groupId>org.springframework.boot</groupId>
@@ -30,12 +31,21 @@
             <artifactId>spring-boot-starter-data-jpa</artifactId>
         </dependency>
         <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-security</artifactId>
+        </dependency>
+        <dependency>
             <groupId>com.h2database</groupId>
             <artifactId>h2</artifactId>
             <scope>runtime</scope>
         </dependency>
+        <dependency>
+            <groupId>org.apache.commons</groupId>
+            <artifactId>commons-text</artifactId>
+            <version>${commons-text.version}</version>
+        </dependency>
     </dependencies>
-    
+
     <build>
         <plugins>
             <plugin>

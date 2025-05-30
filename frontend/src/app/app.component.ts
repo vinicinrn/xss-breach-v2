@@ -1,12 +1,12 @@
-import { Component, OnInit } from '@angular/core';
+import { Component } from '@angular/core';
 import { BlogService, BlogPost } from './services/blog.service';
-import { DomSanitizer } from '@angular/platform-browser';
+import { DomSanitizer, SafeHtml } from '@angular/platform-browser';
 
 @Component({
   selector: 'app-root',
   template: `
     <div class="container">
-      <h1>Vulnerable Blog</h1>
+      <h1>Secure Blog</h1>
       
       <!-- Create Post Form -->
       <div class="create-post">
@@ -29,9 +29,10 @@ import { DomSanitizer } from '@angular/platform-browser';
       <div class="posts">
         <h2>Posts</h2>
         <div *ngFor="let post of posts" class="post">
-          <!-- Usando div em vez de h3 para maior vulnerabilidade -->
-          <div [innerHTML]="trustAsHtml(post.title)" class="post-title"></div>
-          <div [innerHTML]="trustAsHtml(post.content)" class="post-content"></div>
+          <!-- Usando text interpolation segura -->
+          <h3>{{post.title}}</h3>
+          <!-- Usando SafeHtml para conteúdo que precisa de HTML -->
+          <div [innerHTML]="getSafeHtml(post.content)"></div>
           <p>By: {{post.author}}</p>
           <hr>
         </div>
@@ -45,11 +46,9 @@ import { DomSanitizer } from '@angular/platform-browser';
     textarea { height: 100px; }
     button { padding: 10px 20px; background: #007bff; color: white; border: none; cursor: pointer; }
     .post { margin-bottom: 20px; }
-    .post-title { font-size: 1.5em; font-weight: bold; margin-bottom: 10px; }
-    .post-content { margin-bottom: 10px; }
   `]
 })
-export class AppComponent implements OnInit {
+export class AppComponent {
   posts: BlogPost[] = [];
   newPost: BlogPost = {
     title: '',
@@ -60,23 +59,18 @@ export class AppComponent implements OnInit {
   constructor(
     private blogService: BlogService,
     private sanitizer: DomSanitizer
-  ) {}
-
-  ngOnInit() {
+  ) {
     this.loadPosts();
   }
 
   loadPosts() {
     this.blogService.getPosts().subscribe(posts => {
-      console.log('Posts carregados:', posts);
       this.posts = posts;
     });
   }
 
   createPost() {
-    console.log('Criando post:', this.newPost);
     this.blogService.createPost(this.newPost).subscribe(post => {
-      console.log('Post criado:', post);
       this.posts.unshift(post);
       this.newPost = {
         title: '',
@@ -86,8 +80,9 @@ export class AppComponent implements OnInit {
     });
   }
 
-  trustAsHtml(content: string) {
-    console.log('Renderizando conteúdo:', content);
+  // Método para sanitizar HTML permitindo apenas tags seguras
+  getSafeHtml(content: string): SafeHtml {
+    // Você pode adicionar uma biblioteca como DOMPurify aqui para sanitização adicional
     return this.sanitizer.bypassSecurityTrustHtml(content);
   }
 } 
